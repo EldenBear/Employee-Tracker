@@ -12,7 +12,7 @@ const db = mysql.createConnection(
   {
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: 'root',
     database: 'employees_db'
   },
   console.log(`Connected to the employees_db database.`)
@@ -39,7 +39,9 @@ const queryDepartments = () => {
     db.query("SELECT * FROM department;", function (err, results){
         console.log(results);
     });
-}
+};
+
+
 
 app.use((req, res) => {
   res.status(404).end();
