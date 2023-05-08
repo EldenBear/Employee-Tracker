@@ -41,6 +41,19 @@ const queryDepartments = () => {
     });
 };
 
+const queryRole = () => {
+    db.query("SELECT * FROM role;", function (err, results){
+        console.log(results);
+    });
+};
+
+const queryEmployee = () => {
+    db.query("SELECT * FROM employee;", function (err, results){
+        console.log(results);
+    });
+};
+
+
 
 
 app.use((req, res) => {
@@ -54,6 +67,18 @@ app.listen(PORT, () => {
     if (data.directory === viewAllDepartments){
         queryDepartments();
     }
-  }); 
+  });
 
+  inquirer.prompt(questions).then((data) => {
+    if (data.directory === viewAllRoles){
+        queryRole();
+    }
+  });
+
+  inquirer.prompt(questions).then((data) => {
+    if (data.directory === viewAllEmployees){
+        queryEmployee();
+    }
+  });
+  
 });
