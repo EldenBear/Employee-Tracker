@@ -1,5 +1,5 @@
 const express = require('express');
-const { default: Choices } = require('inquirer/lib/objects/choices');
+const inquirer = require('inquirer');
 const mysql = require('mysql2');
 
 const PORT = process.env.PORT || 3001;
@@ -35,6 +35,12 @@ const questions = [
     },
   ];
 
+const queryDepartments = () => {
+    db.query("SELECT * FROM department;", function (err, results){
+        console.log(results);
+    });
+}
+
 app.use((req, res) => {
   res.status(404).end();
 });
@@ -43,7 +49,9 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
  
  inquirer.prompt(questions).then((data) => {
-    if (data.directory === viewAllDepartments){}
-  });
+    if (data.directory === viewAllDepartments){
+        queryDepartments();
+    }
+  }); 
 
 });
