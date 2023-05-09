@@ -81,7 +81,7 @@ const questions = [
     {
       type: "input",
       name: "newManagerId",
-      message: "Please input the new employee's manager's ID",
+      message: "Please input the new employee's manager's ID (Hit enter to skip)",
       when: (answers) => answers.directory === addEmployee
     },
 
@@ -102,38 +102,50 @@ const questions = [
 
 const queryDepartments = () => {
     db.query("SELECT * FROM department;", function (err, results){
-        console.log(results);
+        console.table(results);
+        askQuestions();
     });
 };
 
 const queryRole = () => {
     db.query("SELECT * FROM role;", function (err, results){
-        console.log(results);
+        console.table(results);
+        askQuestions();
     });
 };
 
 const queryEmployee = () => {
     db.query("SELECT * FROM employee;", function (err, results){
-        console.log(results);
+        console.table(results);
+        askQuestions();
     });
 };
 
 const appendDepartment = (departmentName) => {
   db.execute(`INSERT INTO department(department_name) VALUES ("${departmentName}");`);
+  askQuestions();
 };
 
       
 
 const appendRole = (roleName, roleMoney, roleId) => {
   db.execute(`INSERT INTO role(title, salary, department_id) VALUES ("${roleName}", ${roleMoney}, ${roleId});`);
+  askQuestions();
 };
 
 const appendEmployee = (first_name, last_name, role_id, manager_id) => {
-  db.execute(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ("${first_name}", "${last_name}", ${role_id}, ${manager_id});`);
+  console.log(manager_id);
+  if (manager_id === "") {
+    db.execute(`INSERT INTO employee(first_name, last_name, role_id) VALUES ("${first_name}", "${last_name}", ${role_id});`);
+  } else{
+    db.execute(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ("${first_name}", "${last_name}", ${role_id}, ${manager_id});`);
+  };
+  askQuestions();
 };
 
 const updateRole = (newRole, oldEmployeeId) => {
-  db.execute(`UPDATE employee SET role_id = ${newRole} WHERE id = ${oldEmployeeId}`)
+  db.execute(`UPDATE employee SET role_id = ${newRole} WHERE id = ${oldEmployeeId};`);
+  askQuestions();
 };
 
 
@@ -154,7 +166,6 @@ const askQuestions = () => {
      } else if (data.directory === updateEmployeeRole) {
        updateRole(data.updatedRole, data.oldEmployeeId);
      }
-     askQuestions();
    }); 
   
 }
