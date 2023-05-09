@@ -17,7 +17,7 @@ const db = mysql.createConnection(
   },
   console.log(`Connected to the employees_db database.`)
 );
-
+// Consts for user choices
 const viewAllDepartments = "View all departments";
 const viewAllRoles = "View all roles";
 const viewAllEmployees = "View all employees";
@@ -25,7 +25,7 @@ const addDepartment = "Add a department";
 const addRole = "Add a role";
 const addEmployee = "Add an employee";
 const updateEmployeeRole = "Update employee role";
-
+// Questions given to user
 const questions = [
     {
       type: "list",
@@ -99,40 +99,40 @@ const questions = [
       when : (answers) => answers.directory === updateEmployeeRole
     }
   ];
-
+// Gets all Departments
 const queryDepartments = () => {
     db.query("SELECT * FROM department;", function (err, results){
         console.table(results);
         askQuestions();
     });
 };
-
+// Gets all job roles
 const queryRole = () => {
     db.query("SELECT * FROM role;", function (err, results){
         console.table(results);
         askQuestions();
     });
 };
-
+// Gets all employees
 const queryEmployee = () => {
     db.query("SELECT * FROM employee;", function (err, results){
         console.table(results);
         askQuestions();
     });
 };
-
+// Adds new department
 const appendDepartment = (departmentName) => {
   db.execute(`INSERT INTO department(department_name) VALUES ("${departmentName}");`);
   askQuestions();
 };
 
       
-
+// Adds new role
 const appendRole = (roleName, roleMoney, roleId) => {
   db.execute(`INSERT INTO role(title, salary, department_id) VALUES ("${roleName}", ${roleMoney}, ${roleId});`);
   askQuestions();
 };
-
+// Adds new employee
 const appendEmployee = (first_name, last_name, role_id, manager_id) => {
   console.log(manager_id);
   if (manager_id === "") {
@@ -142,13 +142,13 @@ const appendEmployee = (first_name, last_name, role_id, manager_id) => {
   };
   askQuestions();
 };
-
+// Updates existing employee's role
 const updateRole = (newRole, oldEmployeeId) => {
   db.execute(`UPDATE employee SET role_id = ${newRole} WHERE id = ${oldEmployeeId};`);
   askQuestions();
 };
 
-
+// Prompts
 const askQuestions = () => {
   inquirer.prompt(questions).then((data) => {
      if (data.directory === viewAllDepartments){
