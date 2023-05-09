@@ -47,20 +47,57 @@ const questions = [
       message: "Please input new role name",
       when: (answers) => answers.directory === addRole
     },
-
     {
       type: "input",
       name: "roleSalary",
       message: "Please input new role salary",
       when: (answers) => answers.directory === addRole
     },
-
     {
       type: "input",
       name: "roleDepartmentId",
       message: "Please input new role department ID",
       when: (answers) => answers.directory === addRole
     },
+
+    {
+      type: "input",
+      name: "newFirstName",
+      message: "Please input the new employee's first name",
+      when: (answers) => answers.directory === addEmployee
+    },
+    {
+      type: "input",
+      name: "newLastName",
+      message: "Please input the new employee's last name",
+      when: (answers) => answers.directory === addEmployee
+    },
+    {
+      type: "input",
+      name: "newRoleId",
+      message: "Please input the new employee's Role ID",
+      when: (answers) => answers.directory === addEmployee
+    },
+    {
+      type: "input",
+      name: "newManagerId",
+      message: "Please input the new employee's manager's ID",
+      when: (answers) => answers.directory === addEmployee
+    },
+
+    {
+      type: "input",
+      name: "oldEmployeeId",
+      message: "Please enter employee's ID you wish to update",
+      when : (answers) => answers.directory === updateEmployeeRole
+    },
+
+    {
+      type: "input",
+      name: "updatedRole",
+      message: "Please enter employee's new role ID",
+      when : (answers) => answers.directory === updateEmployeeRole
+    }
   ];
 
 const queryDepartments = () => {
@@ -95,12 +132,32 @@ const appendEmployee = (first_name, last_name, role_id, manager_id) => {
   db.execute(`INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ("${first_name}", "${last_name}", ${role_id}, ${manager_id});`);
 };
 
-const updateRole = (newRole) => {
-  `UPDATE`
+const updateRole = (newRole, oldEmployeeId) => {
+  db.execute(`UPDATE employee SET role_id = ${newRole} WHERE id = ${oldEmployeeId}`)
+};
+
+
+const askQuestions = () => {
+  inquirer.prompt(questions).then((data) => {
+     if (data.directory === viewAllDepartments){
+         queryDepartments();
+     } else if (data.directory === viewAllRoles) {
+       queryRole();
+     } else if (data.directory === viewAllEmployees) {
+       queryEmployee();
+     } else if (data.directory === addDepartment) {
+       appendDepartment(data.department);
+     } else if (data.directory === addRole) {
+       appendRole(data.role, data.roleSalary, data.roleDepartmentId);
+     } else if (data.directory === addEmployee) {
+       appendEmployee(data.newFirstName, data.newLastName, data.newRoleId, data.newManagerId);
+     } else if (data.directory === updateEmployeeRole) {
+       updateRole(data.updatedRole, data.oldEmployeeId);
+     }
+     askQuestions();
+   }); 
+  
 }
-
-
-
 
 app.use((req, res) => {
   res.status(404).end();
@@ -108,20 +165,6 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
- 
- inquirer.prompt(questions).then((data) => {
-    if (data.directory === viewAllDepartments){
-        queryDepartments();
-    } else if (data.directory === viewAllRoles) {
-      queryRole();
-    } else if (data.directory === viewAllEmployees) {
-      queryEmployee();
-    } else if (data.directory === addDepartment) {
-      appendDepartment(data.department);
-    } else if (data.directory === addRole) {
-      appendRole(data.role, data.roleSalary, data.roleDepartmentId);
-    } else if (data.directory === addEmployee) {
-      appendEmployee();
-    }
-  }); 
+  
+ askQuestions();
 });
